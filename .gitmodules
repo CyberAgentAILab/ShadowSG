@@ -1,0 +1,9 @@
+[submodule "external/ECON"]
+	path = external/ECON
+	url = git@github.com:YuliangXiu/ECON.git
+[submodule "external/spheretree"]
+	path = external/spheretree
+	url = git@github.com:r0bertr/spheretree.git
+[submodule "external/DSINE"]
+	path = external/DSINE
+	url = git@github.com:baegwangbin/DSINE.git

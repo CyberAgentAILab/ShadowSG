@@ -1,0 +1,12 @@
+path_to_data: ''
+sphere_level: -1
+downscale: 1
+downscale_eval: 1
+diffuse:
+- 1.0
+- 1.0
+- 1.0
+ssdf_method: sph_coarse2fine_min
+ssdf_mesh_n_thetas: 36
+ssdf_mesh_n_phis: 9
+ssdf_sph_coarse2fine_k: 3
