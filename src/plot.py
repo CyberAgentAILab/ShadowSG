@@ -26,7 +26,7 @@ class Args:
 
 def load_gt_img(path: Path) -> np.ndarray:
     img_gt = load_img(path)[..., :3]
-    img_gt = ((img_gt ** (1 / 2.2)).clamp(0, 1) * 255).byte().detach().cpu().numpy()  
+    img_gt = ((img_gt ** (1 / 2.2)).clamp(0, 1) * 255).byte().detach().cpu().numpy()
     return img_gt
 
 def load_table(path_to_exp_root, path_to_data_root, exp_names,
@@ -246,7 +246,7 @@ def generate_table_latex(path_to_output, metrics_table, scene_names, exp_names, 
     else:
         header1 = " & ".join(["", "", "\multicolumn{{{}}}{{c}}{{Image}}".format(len(metric_display_names))])
         header2 = " & ".join(["Illumination", "Method"] + metric_display_names)
-    
+
     header1 = "\\toprule " + header1 + "\\\\"
     header2 += "\\\\ \\midrule"
 
@@ -278,7 +278,7 @@ def generate_table_latex(path_to_output, metrics_table, scene_names, exp_names, 
                 method_name = "Ours"
             else:
                 method_name = baseline_method_names[exp_name]
-            
+
             latex_row = []
             if method_name_orders[method_name] == 0:
                 scene_vis_name = f"\\textsc{{{scene_name.split('_')[1].capitalize()}}}"
@@ -320,23 +320,8 @@ def main():
     metrics_table = load_table(args.path_to_exp_root, args.path_to_data_root,
         exp_names, True, args.virtual_objs)
 
-    # if args.choose_best:
-    #     image_table = choose_best(image_table, metrics_table, exp_names, args.choose_best_metric_name)[0]
-    #     envmap_table = choose_best(envmap_table, metrics_table, exp_names, args.choose_best_metric_name)[0]
-    #     image_err_table, metrics_table, exp_names = choose_best(image_err_table, metrics_table, exp_names, args.choose_best_metric_name)
-
     plot_visualization(Path(args.path_to_output) / "visualization.jpg",
         image_table, args.img_height, exp_names)
-    # plot_visualization(Path(args.path_to_output) / "envmap.png", envmap_table, args.img_width, args.img_height, scene_names, exp_names)
-    # plot_qualitative(Path(args.path_to_output) / "qualitative.png", image_table, image_err_table, envmap_table,
-    #     args.img_width, args.img_height, scene_names, exp_names, args.img_err_scaled_factor)
-
-    # metric_names = list(metrics_table[0][1]["img"].keys())
-    # for metric_name in metric_names:
-    #     plot_metrics(Path(args.path_to_output) / f"image_{metric_name}.png", metrics_table, "img", metric_name, scene_names, exp_names)
-    #     plot_metrics(Path(args.path_to_output) / f"envmap_{metric_name}.png", metrics_table, "env", metric_name, scene_names, exp_names)
-
-    # generate_table_latex(Path(args.path_to_output) / "table_latex.txt", metrics_table, scene_names, exp_names)
 
 if __name__ == "__main__":
     main()

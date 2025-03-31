@@ -35,32 +35,9 @@ class SphericalGaussians():
             self.k_coeffs = np.loadtxt(self.cfg.gaussian.path_to_sigma_ckpt, dtype=np.float32)
             self.k_coeffs = torch.tensor(self.k_coeffs, device=self.device)
         elif self.cfg.gaussian.sigma_fn_type == "mlp_ssdf":
-            # self.mlp = tcnn.Network(
-            #     n_input_dims=3 if self.cfg.gaussian.anistropic else 2, # (lambd, theta[, tangent])
-            #     n_output_dims=1,
-            #     network_config={
-            #         "otype": "FullyFusedMLP",
-            #         "activation": "ReLU",
-            #         "output_activation": "Sigmoid",
-            #         "n_neurons": 128,
-            #         "n_hidden_layers": 4,
-            #     }
-            # )
-            # self.mlp.load_state_dict(torch.load(self.cfg.gaussian.path_to_sigma_ckpt))
             assert self.cfg.gaussian.path_to_sigma_ckpt != "", "Path to mlp checkpoint is not specified for mlp-based ssdf"
             self.mlp = torch.load(self.cfg.gaussian.path_to_sigma_ckpt).to(self.device)
         elif self.cfg.gaussian.sigma_fn_type == "mlp":
-            # self.mlp = tcnn.NetworkWithInputEncoding(
-            #     n_input_dims=8 if self.cfg.gaussian.anistropic else 7, # (xyz, mu, lambd[, tangent])
-            #     n_output_dims=1,
-            #     network_config={
-            #         "otype": "CutlassMLP",
-            #         "activation": "ReLU",
-            #         "output_activation": "Sigmoid",
-            #         "n_neurons": 128,
-            #         "n_hidden_layers": 4,
-            #     }
-            # )
             self.mlp = nn.Sequential(
                 nn.Linear(8 if self.cfg.gaussian.anistropic else 7, 128),
                 nn.ReLU(),
@@ -117,10 +94,6 @@ class SphericalGaussians():
 
         if self.cfg.gaussian.sigma_fn_type == "k" and self.cfg.gaussian.optimizable_k:
             self.k_coeffs = nn.Parameter(self.k_coeffs.detach().clone(), requires_grad=True)
-            # self.k_coeffs = nn.Parameter(torch.rand((4,), device=self.device), requires_grad=True)
-            # self.k_coeffs = nn.Parameter(torch.zeros((4,), device=self.device), requires_grad=True)
-            # self.k_coeffs = nn.Parameter(torch.ones((4,), device=self.device), requires_grad=True)
-
         self._attrs = {
             "lobe_axis": nn.Parameter(sgs[:, :3].detach().clone(), requires_grad=not self.is_eval),
             "sharpness": nn.Parameter(sgs[:, 3:4].detach().clone(), requires_grad=not self.is_eval),
@@ -470,29 +443,6 @@ class AniSphericalGaussians(SphericalGaussians):
         thetas: Float[Tensor, "n_rays n_asg 1"] = None,
         xyz: Float[Tensor, "n_rays 3"] = None,
         ) -> Float[Tensor, "n_rays 3"]:
-
-        # cov_c = self.get_cov_clamped_cos(normals) # n_rays 3 3
-        # cov_l = self.get_cov() # n_asg 3 3
-
-        # cov = cov_c[..., None, :, :] + cov_l # n_rays n_asg 3 3
-        # s, u = torch.linalg.eigh(cov) # n_rays n_asg 3, n_rays n_asg 3 3
-        # lambd = s[..., -1:] - s[..., 0:1] # n_rays n_asg 1
-        # mu = s[..., -2:-1] - s[..., 0:1] # n_rays n_asg 1
-
-        # z_l = quaternion_to_matrix(self.get_attr("rotation"))[..., -1] # n_asg 3
-        # z_c = normals # n_rays 3
-        # z = u[..., 0] # n_rays n_asg 3
-        # smooth_l = torch.maximum(torch.sum(z * z_l, dim=-1, keepdim=True), torch.tensor(0.0, device=self.device)) # n_rays n_asg 1
-        # smooth_c = torch.maximum(torch.sum(z * z_c[..., None, :], dim=-1, keepdim=True), torch.tensor(0.0, device=self.device)) # n_rays n_asg 1
-        # sharp = torch.sqrt(lambd * mu) # n_rays n_asg 1
-        # # nu = lambd - mu # n_rays n_asg 1
-        # # integral = torch.pi / sharp - (torch.exp(-mu) / (2 * lambd)) * (bessel_fn(nu) + nu / mu * bessel_fn(nu + nu / mu)) # n_rays n_asg 1
-        # integral = torch.pi / sharp
-        # integral = smooth_l * smooth_c * integral # n_rays n_asg 1
-
-        # color_c = torch.ones((*normals.shape[:-1], 3), device=self.device) * 1.170 # n_rays C
-        # color_l = self.get_attr("amplitude") # n_asg C
-        # color = (color_c[..., None, :] * color_l) # n_rays n_asg C
 
         scale = self.get_attr("scale") # n_asg 2
         sharp = torch.sqrt(scale[:, 0:1] * scale[:, 1:2]) # n_asg 1

@@ -16,7 +16,7 @@ git clone --recursive https://github.com/CyberAgentAILab/ShadowSG.git
 
     ```bash
     pip install torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu118
-    pip install "git+https://github.com/facebookresearch/pytorch3d.git"
+    pip install "git+https://github.com/facebookresearch/pytorch3d.git@v0.7.8"
     ```
 
     > Note: You can specify your own cuda version by changing the index url link.
@@ -43,7 +43,7 @@ data
 ```
 
 The synthetic and real-world data used in the paper can be found via [Google Drive](https://drive.google.com/drive/folders/1cn9Y0F1Chib4OQaB4lcypIfsmr0dRgG9?usp=sharing).
-We provide a script to automatically download our data in `scripts/download_data.sh`.
+We provide a script to automatically download our data in [data/download_data.sh](data/download_data.sh).
 Simply running the following command and the data will be downloaded to `./data`.
 
 ```bash
@@ -52,7 +52,7 @@ sh ./data/download_data.sh
 
 ### Generate sphere trees for custom models
 
-We provide a compiled binary `./src/makeTreeMedial` of [spheretree](https://github.com/r0bertr/spheretree).
+We provide a compiled binary [./src/makeTreeMedial](src/makeTreeMedial) of [spheretree](https://github.com/r0bertr/spheretree).
 This binary is tested on Ubuntu 22.04.
 
 Run the following command to generate a sphere-tree approximation for an custom `.obj` file.
@@ -86,7 +86,7 @@ Please consider citating our work using the following bibtex:
 @inproceedings{shadowsg2025zhang,
   title={{ShadowSG: S}pherical Gaussian Illumination from Shadows},
   author={Zhang, Hanwei and Cao, Xu and Kawasaki, Hiroshi and Taketomi, Takafumi},
-  booktitle= International Conference on 3D Vision (3DV),
+  booktitle= {International Conference on 3D Vision (3DV)},
   year={2025}
 }
 ```

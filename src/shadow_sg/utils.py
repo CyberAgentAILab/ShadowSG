@@ -105,12 +105,12 @@ def rotation_between_vectors(vec1, vec2):
     # vec1.shape = [N, 3]
     # vec2.shape = [N, 3]
     batch_size = vec1.shape[0]
-    
+
     v = torch.cross(vec1, vec2, dim=-1)                                                     # [N, 3, 3]
 
     cos = torch.bmm(vec1.view(batch_size, 1, 3), vec2.view(batch_size, 3, 1))
     cos = cos.reshape(batch_size, 1, 1).repeat(1, 3, 3)                             # [N, 3, 3]
-    
+
     skew_sym_mat = torch.zeros(batch_size, 3, 3, device=vec1.device)
     skew_sym_mat[:, 0, 1] = -v[:, 2]
     skew_sym_mat[:, 0, 2] = v[:, 1]
@@ -148,15 +148,6 @@ def build_covariance(rot: Float[Tensor, "* 4"], scale: Float[Tensor, "* 2"]) -> 
     cov = R @ S @ R.transpose(-2, -1) # n_asg 3 3
     return cov
 
-    # x = R[..., :, 0] # * 3
-    # y = R[..., :, 1] # * 3
-    # lnc = torch.log(color)[..., None, None] * torch.eye(3, device=rot.device) # * C 3 3
-    # cov = scale[..., 0:1, None] * (x[..., None] @ x[..., None, :]) + \
-    #     scale[..., 1:2, None] * (y[..., None] @ y[..., None, :]) # * 3 3
-    # cov = cov[..., None, :, :] - lnc
-
-    # return cov
-
 def fft(input: Float[Tensor, "H W 3"]) -> Float[Tensor, "H W 1"]:
     assert input.ndim == 3 and (input.shape[-1] == 3 or input.shape[-1] == 1)
     fft_input = input
@@ -165,7 +156,6 @@ def fft(input: Float[Tensor, "H W 3"]) -> Float[Tensor, "H W 1"]:
     frequency = torch.fft.fftn(fft_input)
     frequency = torch.fft.fftshift(frequency)
     frequency = torch.sqrt(frequency.real**2 + frequency.imag**2)
-    # frequency = torch.log10(frequency + 1e-8)
     return frequency
 
 def scale_invarient_rmse(x: Float[Tensor, "*"], x_hat: Float[Tensor, "*"]) -> float:
@@ -200,7 +190,7 @@ def fibonacci_sphere_sampling(sample_num, device="cuda"):
     '''
     delta = np.pi * (3.0 - np.sqrt(5.0))
 
-    # fibonacci sphere sample around z axis 
+    # fibonacci sphere sample around z axis
     idx = torch.arange(sample_num, device=device).float().unsqueeze(-1) # [S, 1]
     if sample_num == 1:
         z = torch.tensor([[1.0]], device=device)
@@ -211,7 +201,6 @@ def fibonacci_sphere_sampling(sample_num, device="cuda"):
     y = torch.cos(theta) * rad # [S, 1]
     x = torch.sin(theta) * rad # [S, 1]
     z_samples = torch.cat([x, y, z], axis=-1) # [S, 3]
-
     return z_samples
 
 def compute_metrics(img: Float[Tensor, "img_h img_w 3"],

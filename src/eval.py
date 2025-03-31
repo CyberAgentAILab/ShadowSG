@@ -20,7 +20,7 @@ class Args:
     iteration: int = -1
     ssdf_method: str = "sph_level_min"
     load_exist_img: bool = False
-    
+
     path_to_output: str = None
     path_to_ckpt: str = None
 
@@ -139,7 +139,6 @@ def main():
         if (Path(args.path_to_exp_dir) / "envmap_nnls" / "envmap.exr").exists():
             envmap_nnls = load_img(Path(args.path_to_exp_dir) / "envmap_nnls" / "envmap.exr")
         trainer = LSTSQTrainer(cfg)
-        # trainer.eval(scene, envmap, envmap_nnls, load_exist_img=args.load_exist_img, obj_indices=obj_indices)
 
         if args.composite_with_gt:
             paths = [Path(cfg.base.path_to_output) / "envmap" / "image.exr", Path(cfg.base.path_to_output) / "envmap_nnls" / "image.exr"]
