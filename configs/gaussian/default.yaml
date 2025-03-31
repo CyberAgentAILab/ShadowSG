@@ -1,0 +1,14 @@
+anistropic: false
+envmap_height: 512
+n_gaussians: 256
+path_to_ckpt: ''
+path_to_sigma_ckpt: ./data/k_coeffs_wang.txt
+prune_by_amplitude_grad_threshold: 0.001
+prune_by_amplitude_threshold: 0.005
+render_chunk_size: 1024
+sigma_fn_type: k
+optimizable_k: false
+use_hemisphere: true
+lobe_axis_activation_fn: normalize
+sharpness_activation_fn: exp
+amplitude_activation_fn: abs
